@@ -1,0 +1,59 @@
+{
+  "name": "player",
+  "version": "1.0.0",
+  "description": "Minimalist Audio Player",
+  "author": "Player",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64",
+    "icon": "node scripts/generate-icon.js"
+  },
+  "devDependencies": {
+    "electron": "^28.3.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11",
+    "sql.js": "^1.14.1"
+  },
+  "build": {
+    "appId": "com.audio.player",
+    "productName": "Player",
+    "publish": {
+      "provider": "github",
+      "owner": "Jarkehsjdb",
+      "repo": "pleer"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "asarUnpack": [
+      "node_modules/sql.js/dist/sql-wasm.wasm"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "icon": "assets/icon.ico",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Player"
+    }
+  }
+}

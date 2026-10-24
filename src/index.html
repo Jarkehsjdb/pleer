@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; media-src media: file:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Player</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="titlebar">
+    <div class="titlebar-drag">
+      <span class="app-title">PLAYER</span>
+    </div>
+    <div class="titlebar-btns">
+      <button id="btn-min">─</button>
+      <button id="btn-max">□</button>
+      <button id="btn-close" class="close">✕</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-header">
+          <span>Библиотека</span>
+          <button class="icon-btn" id="btn-add-folder" title="Добавить папку">+</button>
+        </div>
+        <ul id="static-nav">
+          <li class="nav-item active" id="nav-all"><span>Все треки</span></li>
+          <li class="nav-item" id="nav-favorites">
+            <span><span class="fav-heart">♥</span> Любимое</span>
+          </li>
+        </ul>
+        <ul id="folder-list"></ul>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-header">
+          <span>Плейлисты</span>
+          <button class="icon-btn" id="btn-add-playlist" title="Новый плейлист">+</button>
+        </div>
+        <ul id="playlist-list"></ul>
+      </div>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-footer">
+        <button class="settings-btn" id="btn-settings">⚙ Настройки</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div id="library-view">
+        <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" id="search-input" type="text" placeholder="Поиск..." autocomplete="off" spellcheck="false">
+        <button class="search-clear-btn" id="search-clear">✕</button>
+      </div>
+      <div class="sort-bar">
+        <button class="sort-btn" data-sort="title">А–Я</button>
+        <button class="sort-btn" data-sort="date">По дате</button>
+      </div>
+      <div class="track-header">
+          <span class="c-num">#</span>
+          <span class="c-title">Название</span>
+          <span class="c-dur">Длит.</span>
+          <span></span>
+        </div>
+        <div class="track-list" id="track-list"></div>
+      </div>
+
+      <div class="settings-panel" id="settings-panel">
+        <div class="settings-title">Настройки</div>
+
+        <div class="setting-group">
+          <div class="setting-group-label">Внешний вид</div>
+          <div class="setting-row">
+            <span class="setting-label">Тема</span>
+            <div class="theme-switcher">
+              <button class="theme-btn" data-theme="dark">Тёмная</button>
+              <button class="theme-btn" data-theme="black">Чёрная</button>
+              <button class="theme-btn" data-theme="light">Светлая</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Акцентный цвет</span>
+            <div class="accent-picker" id="accent-picker"></div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Масштаб</span>
+            <div class="theme-switcher" id="scale-switcher"></div>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Компактный список</span>
+            <label class="toggle">
+              <input type="checkbox" id="set-compact">
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Яркий текст</span>
+            <label class="toggle">
+              <input type="checkbox" id="set-text-bright">
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-label">Библиотека</div>
+          <div class="setting-row">
+            <span class="setting-label">Сортировка треков</span>
+            <select class="setting-select" id="set-sort">
+              <option value="title">По названию</option>
+              <option value="date">По дате добавления</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-group-label">О программе</div>
+          <div class="setting-row">
+            <span class="setting-label">Версия</span>
+            <span class="setting-val">1.0.0</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Форматы</span>
+            <span class="setting-val">MP3 · FLAC · OGG · WAV · AAC · M4A · OPUS</span>
+          </div>
+          <div class="setting-row">
+            <span class="setting-label">Обновления</span>
+            <button class="theme-btn" id="btn-check-updates" style="padding: 4px 10px; font-size: 11px;">Проверить сейчас</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="player-bar">
+    <div class="p-info">
+      <div class="p-title" id="p-title">—</div>
+      <div class="p-source" id="p-source"></div>
+    </div>
+    <div class="p-center">
+      <canvas id="waveform" class="waveform"></canvas>
+      <div class="p-controls">
+        <button class="ctrl" id="btn-shuffle" title="Перемешать"></button>
+        <button class="ctrl" id="btn-prev" title="Предыдущий"></button>
+        <button class="ctrl play" id="btn-play" title="Играть"></button>
+        <button class="ctrl" id="btn-next" title="Следующий"></button>
+        <button class="ctrl" id="btn-repeat" title="Повтор"></button>
+      </div>
+      <div class="p-progress">
+        <span class="time" id="t-cur">0:00</span>
+        <input type="range" id="progress" min="0" max="1000" value="0">
+        <span class="time" id="t-total">0:00</span>
+      </div>
+    </div>
+    <div class="p-right">
+      <span class="vol-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+      </span>
+      <input type="range" id="volume" min="0" max="100" value="80">
+    </div>
+  </div>
+
+  <div class="ctx-menu" id="ctx-menu"></div>
+
+  <div class="modal-bg" id="modal-bg">
+    <div class="modal">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-message" id="modal-message" style="display:none"></div>
+      <input class="modal-input" id="modal-input" type="text">
+      <div class="modal-row">
+        <button class="modal-btn" id="modal-cancel">Отмена</button>
+        <button class="modal-btn primary" id="modal-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio"></audio>
+  <div class="toast" id="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>
