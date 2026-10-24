@@ -231,24 +231,31 @@ function setupAutoUpdater() {
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
 
+  function handleUpdaterError(err) {
+    const errStr = String(err?.message || err || '');
+    const is404 = err?.statusCode === 404 || errStr.includes('404');
+    if (is404) {
+      // 404 означает, что интернет есть, но на GitHub пока не создан раздел Releases
+      if (isManualUpdateCheck && mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('toast:show', 'На GitHub пока нет опубликованных релизов');
+      }
+    } else {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('toast:show', 'Не удалось проверить наличие обновления');
+      }
+    }
+    isManualUpdateCheck = false;
+  }
+
   // Автоматическая проверка через 3 секунды после запуска
   setTimeout(() => {
     if (app.isPackaged) {
       isManualUpdateCheck = false;
-      autoUpdater.checkForUpdates().catch(() => {
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('toast:show', 'Не удалось проверить наличие обновления');
-        }
-      });
+      autoUpdater.checkForUpdates().catch(handleUpdaterError);
     }
   }, 3000);
 
-  autoUpdater.on('error', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('toast:show', 'Не удалось проверить наличие обновления');
-    }
-    isManualUpdateCheck = false;
-  });
+  autoUpdater.on('error', (err) => handleUpdaterError(err));
 
   autoUpdater.on('update-available', (info) => {
     isManualUpdateCheck = false;
