@@ -24,7 +24,8 @@
     "publish": {
       "provider": "github",
       "owner": "Jarkehsjdb",
-      "repo": "pleer"
+      "repo": "pleer",
+      "releaseType": "release"
     },
     "files": [
       "src/**/*",
