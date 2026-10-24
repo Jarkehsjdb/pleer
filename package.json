@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --win --x64",
+    "release": "electron-builder --win --x64 --publish always",
     "icon": "node scripts/generate-icon.js"
   },
   "devDependencies": {
